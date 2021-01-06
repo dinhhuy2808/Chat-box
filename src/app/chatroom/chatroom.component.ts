@@ -48,7 +48,7 @@ export class ChatroomComponent implements OnInit {
               public datepipe: DatePipe) {
                 this.nickname = localStorage.getItem('nickname');
                 this.roomname = this.route.snapshot.params.roomname;
-                firebase.database().ref('chats/').on('value', resp => {
+                firebase.database().ref('chats/').orderByChild('roomname').equalTo(this.roomname).on('value', resp => {
                   this.chats = [];
                   this.chats = snapshotToArray(resp);
                   setTimeout(() => this.scrolltop = this.chatcontent.nativeElement.scrollHeight, 500);

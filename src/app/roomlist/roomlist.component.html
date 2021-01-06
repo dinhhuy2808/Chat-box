@@ -23,3 +23,63 @@
     </table>
   </div>
 </div>
+<div class="chatbox-holder" >
+  <ng-container  *ngFor="let room of chatMaps| keyvalue; let i = index ">
+	  <div class="chatbox" #chatcontent  id="chatbox{{i}}">
+	    <div class="chatbox-top"  (click)="minusBoxChat(i)">
+	      <div class="chatbox-avatar">
+	        <a target="_blank" href="https://www.facebook.com/mfreak"><img src="https://gravatar.com/avatar/2449e413ade8b0c72d0a15d153febdeb?s=512&d=https://codepen.io/assets/avatars/user-avatar-512x512-6e240cf350d2f1cc07c2bed234c3a3bb5f1b237023c204c782622e80d6b212ba.png" /></a> 
+	      </div>
+	      <div class="chat-partner-name">
+	        <span class="status online"></span>
+	        <a target="_blank" href="https://www.facebook.com/mfreak">{{room.key}}</a>
+	      </div>
+	      <div class="chatbox-icons">
+	        <a ><i class="fa fa-minus" (click)="minusBoxChat(i)"></i></a>
+	        <a ><i class="fa fa-close" (click)="closeBoxChat(i)"></i></a>       
+	      </div>      
+	    </div>
+	    
+	    <div class="chat-messages"   [scrollTop]="scrolltop">
+	    	<ng-container *ngFor="let chat of room.value; let j=index">
+	    		<ng-container *ngIf="chat.nickname==nickname">
+			       <div class="message-box-holder">
+			        <div class="message-box">
+			          {{chat.message}}
+			        </div>
+			      </div>
+	    		</ng-container>
+	    		<ng-container *ngIf="chat.nickname!=nickname">
+			      <div class="message-box-holder">
+			        <div class="message-sender" *ngIf="j>0&&room.value[j-1].nickname!=room.value[j].nickname">
+			           {{chat.nickname}}
+			         </div>
+			        <div class="message-box message-partner">
+			          {{chat.message}}
+			        </div>
+			      </div>
+	    		</ng-container>
+	    	</ng-container>
+	      
+	    </div>
+	    
+	    
+	    
+	    <div class="chat-input-holder">
+	      <textarea class="chat-input" [(ngModel)]="messages[i]"></textarea>
+	      <input type="submit" value="Send" class="message-send" (click)="send(i, room.key)"/>
+	    </div>
+	    <div class="attachment-panel">
+	      <a href="#" class="fa fa-thumbs-up"></a>
+	      <a href="#" class="fa fa-camera"></a>
+	      <a href="#" class="fa fa-video-camera"></a>
+	      <a href="#" class="fa fa-image"></a>
+	      <a href="#" class="fa fa-paperclip"></a>
+	      <a href="#" class="fa fa-link"></a>
+	      <a href="#" class="fa fa-trash-o"></a>
+	      <a href="#" class="fa fa-search"></a>
+	    </div>
+	  </div>
+  </ng-container>
+
+</div>
