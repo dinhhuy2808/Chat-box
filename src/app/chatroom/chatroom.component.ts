@@ -51,7 +51,7 @@ export class ChatroomComponent implements OnInit {
                 firebase.database().ref('chats/').orderByChild('roomname').equalTo(this.roomname).on('value', resp => {
                   this.chats = [];
                   this.chats = snapshotToArray(resp);
-                  setTimeout(() => this.scrolltop = this.chatcontent.nativeElement.scrollHeight, 500);
+//                  setTimeout(() => this.scrolltop = this.chatcontent.nativeElement.scrollHeight, 500);
                 });
                 firebase.database().ref('roomusers/').orderByChild('roomname').equalTo(this.roomname).on('value', (resp2: any) => {
                   const roomusers = snapshotToArray(resp2);

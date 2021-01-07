@@ -1,6 +1,8 @@
+<div class="chatbox-holder" >
+
 <div class="example-container mat-elevation-z8">
-  <mat-drawer-container class="drawer-container">
-    <mat-drawer mode="side" opened class="left-drawer">
+  <mat-drawer-container class="drawer-container chat-box">
+    <!-- <mat-drawer mode="side" opened class="left-drawer">
       <div class="users-pane">
         <mat-card class="users-card">
           <button type="button" mat-button matSuffix mat-icon-button aria-label="Exit" (click)="exitChat()">
@@ -11,7 +13,7 @@
           <mat-icon>person</mat-icon> <span class="username">{{user.nickname}}</span>
         </mat-card>
       </div>
-    </mat-drawer>
+    </mat-drawer> -->
     <mat-drawer-content class="chat-pane">
       <div #chatcontent [scrollTop]="scrolltop" class="chat-content">
         <div class="message-box" *ngFor="let chat of chats">
@@ -47,4 +49,6 @@
       </footer>
     </mat-drawer-content>
   </mat-drawer-container>
+</div>
+
 </div>
