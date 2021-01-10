@@ -31,13 +31,13 @@ export class RoomlistComponent implements OnInit {
 	rooms = [];
 	isLoadingResults = true;
 	chatMaps = new Map();
+	unreadMessageByRoom = new Map();
 	messages: string[] = [];
 
 	subscription: Subscription;
 	statusText: string;
 	polling: any;
 	isFirstCome: boolean = true;
-	
 	roomsLoadFromBegining: string[] =[];
 	constructor(private route: ActivatedRoute, private router: Router, public datepipe: DatePipe) {
 		this.nickname = localStorage.getItem('nickname');
@@ -71,7 +71,17 @@ export class RoomlistComponent implements OnInit {
 		                } else {
 		                    let chats: any = [];
 		                    chats = snapshotToArray(resp2);
-		                    this.chatMaps.get(room.roomname).push(chats[0]);
+							if (document.getElementById('chatbox'+room.roomname).classList.contains('chatbox-min')) {
+								if (this.unreadMessageByRoom.has(room.roomname)) {
+									this.unreadMessageByRoom.get(room.roomname).push(chats[0]);
+								} else {
+									this.unreadMessageByRoom.set(room.roomname,chats);	
+								}
+								
+							} else {
+								this.chatMaps.get(room.roomname).push(chats[0]);
+							}
+		                    
 		                    setTimeout(() => {
 		                        document.getElementById("chat-messages-"+room.roomname).scrollTop=
 	                                document.getElementById("chat-messages-"+room.roomname).scrollHeight;
@@ -93,36 +103,40 @@ export class RoomlistComponent implements OnInit {
 	}
 
 	openChatRoom(roomname: string) {
-	    this.isFirstCome = true;
-	    firebase.database().ref('chats/').orderByChild('roomname').equalTo(roomname).once('value', resp => {
-            let chats: any = [];
-            chats = snapshotToArray(resp);
-            
-            setTimeout(() => {
-                document.getElementById("chat-messages-"+roomname).scrollTop=
-                    document.getElementById("chat-messages-"+roomname).scrollHeight;
-            }
-                ,
-            500);
-            
-            this.chatMaps.set(roomname, chats);
-            
-        });
-	    
-	    firebase.database().ref('chats/').orderByChild('roomname').limitToLast(1).equalTo(roomname).on('value', resp2 => {
-            if (this.isFirstCome) {
-                    this.isFirstCome = false;
-            } else {
-                let chats: any = [];
-                chats = snapshotToArray(resp2);
-                this.chatMaps.get(roomname).push(chats[0]);
-                setTimeout(() => {
-                    document.getElementById("chat-messages-"+roomname).scrollTop=
-                        document.getElementById("chat-messages-"+roomname).scrollHeight;
-                },500);
-                
-            }
-        });
+	    if (!this.chatMaps.has(roomname)) {
+			this.isFirstCome = true;
+		    firebase.database().ref('chats/').orderByChild('roomname').equalTo(roomname).once('value', resp => {
+	            let chats: any = [];
+	            chats = snapshotToArray(resp);
+	            
+	            setTimeout(() => {
+	                document.getElementById("chat-messages-"+roomname).scrollTop=
+	                    document.getElementById("chat-messages-"+roomname).scrollHeight;
+	            }
+	                ,
+	            500);
+	            
+	            this.chatMaps.set(roomname, chats);
+	            
+	        });
+		    
+		    firebase.database().ref('chats/').orderByChild('roomname').limitToLast(1).equalTo(roomname).on('value', resp2 => {
+	            if (this.isFirstCome) {
+	                    this.isFirstCome = false;
+	            } else {
+	                let chats: any = [];
+	                chats = snapshotToArray(resp2);
+	                this.chatMaps.get(roomname).push(chats[0]);
+	                setTimeout(() => {
+	                    document.getElementById("chat-messages-"+roomname).scrollTop=
+	                        document.getElementById("chat-messages-"+roomname).scrollHeight;
+	                },500);
+	                
+	            }
+	        });
+		} else {
+			document.getElementById("chatbox"+roomname).style.removeProperty('display');
+		}
 	}
 	enterChatRoom(roomname: string) {
 		const chat = { roomname: '', nickname: '', message: '', date: '', type: '' };
@@ -175,6 +189,14 @@ export class RoomlistComponent implements OnInit {
 		const chatbox = document.getElementById("chatbox" + roomname);
 		if (chatbox.classList.contains("chatbox-min")) {
 			chatbox.classList.remove("chatbox-min");
+			if (this.unreadMessageByRoom.get(roomname)) {
+				this.chatMaps.get(roomname).push(...this.unreadMessageByRoom.get(roomname));	
+			}
+			this.unreadMessageByRoom.delete(roomname);
+			setTimeout(() => {
+	                    document.getElementById("chat-messages-"+roomname).scrollTop=
+	                        document.getElementById("chat-messages-"+roomname).scrollHeight;
+	                },500);
 		} else {
 			chatbox.classList.add("chatbox-min");
 		}
@@ -184,15 +206,7 @@ export class RoomlistComponent implements OnInit {
 		this.exitChat(roomname);
 	}
 	  exitChat(roomname:string) {
-	      const chat = { roomname: '', nickname: '', message: '', date: '', type: '' };
-	      chat.roomname = roomname;
-	      chat.nickname = this.nickname;
-	      chat.date = this.datepipe.transform(new Date(), 'dd/MM/yyyy HH:mm:ss');
-	      chat.message = `${this.nickname} leave the room`;
-	      chat.type = 'exit';
-	      const newMessage = firebase.database().ref('chats/').push();
-	      newMessage.set(chat);
-	      this.chatMaps.delete(roomname);
+		  document.getElementById("chatbox"+roomname).style.display = 'none';
 	      firebase.database().ref('roomusers/').orderByChild('roomname').equalTo(roomname).on('value', (resp: any) => {
 	        let roomuser = [];
 	        roomuser = snapshotToArray(resp);

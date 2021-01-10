@@ -299,6 +299,7 @@ ul {
 
 .chatbox-min {
   margin-bottom: -362px;
+  width: 250px;
 /*   height: 46px; */
 }
 
@@ -310,7 +311,9 @@ ul {
 .chatbox-min .chat-partner-name, .chatbox-min .chat-group-name {
   padding: 0 0 0 75px;
 }
-
+.chat-partner-name{
+	white-space: nowrap
+}
 .settings-popup {
   background: white;
 	border-radius: 20px/10px;
