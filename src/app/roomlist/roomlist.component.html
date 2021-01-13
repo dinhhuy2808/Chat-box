@@ -1,87 +1,116 @@
 <div class="example-container mat-elevation-z8">
-  <h3>{{nickname}} <button mat-flat-button (click)="logout()"><mat-icon>logout</mat-icon></button></h3>
-  <h2>Room List</h2>
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults">
-    <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-  </div>
-  <div class="button-row">
-    <button mat-flat-button color="primary" [routerLink]="['/addroom']"><mat-icon>add</mat-icon></button>
-  </div>
-  <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="rooms" class="example-table"
-           matSort matSortActive="roomname" matSortDisableClear matSortDirection="asc">
+	<h3>
+		{{nickname}}
+		<button mat-flat-button (click)="logout()">
+			<mat-icon>logout</mat-icon>
+		</button>
+	</h3>
+	<h2>Room List</h2>
+	<div class="example-loading-shade" *ngIf="isLoadingResults">
+		<mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+	</div>
+	<div class="button-row">
+		<button mat-flat-button color="primary" [routerLink]="['/addroom']">
+			<mat-icon>add</mat-icon>
+		</button>
+	</div>
+	<div class="mat-elevation-z8">
+		<table mat-table [dataSource]="rooms" class="example-table" matSort
+			matSortActive="roomname" matSortDisableClear matSortDirection="asc">
 
-      <!-- Room Name Column -->
-      <ng-container matColumnDef="roomname">
-        <th mat-header-cell *matHeaderCellDef>Room Name</th>
-        <td mat-cell *matCellDef="let row">{{row.roomname}}</td>
-      </ng-container>
+			<!-- Room Name Column -->
+			<ng-container matColumnDef="roomname">
+			<th mat-header-cell *matHeaderCellDef>Room Name</th>
+			<td mat-cell *matCellDef="let row">{{row.roomname}}</td>
+			</ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openChatRoom(row.roomname)"></tr>
-    </table>
-  </div>
+			<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+			<tr mat-row *matRowDef="let row; columns: displayedColumns;"
+				(click)="openChatRoom(row.roomname)"></tr>
+		</table>
+	</div>
 </div>
-<div class="chatbox-holder" >
-  <ng-container  *ngFor="let room of chatMaps| keyvalue; let i = index ">
-	  <div class="chatbox" #chatcontent  id="chatbox{{room.key}}">
-	    <div class="chatbox-top">
-	      <div class="chatbox-avatar">
-	        <a target="_blank"><img src="https://gravatar.com/avatar/2449e413ade8b0c72d0a15d153febdeb?s=512&d=https://codepen.io/assets/avatars/user-avatar-512x512-6e240cf350d2f1cc07c2bed234c3a3bb5f1b237023c204c782622e80d6b212ba.png" /></a>
-	        <span class="tooltiptext">{{room.key}}</span> 
-	      </div>
-	      <div class="chat-partner-name nobr">
-	        <span class="status online"></span>
-	        <a target="_blank" href="https://www.facebook.com/mfreak">{{room.key}}</a>
-	        <a *ngIf="unreadMessageByRoom.has(room.key)"><span class="badge badge-danger" style="padding:.25em .4em !important; margin-left: .25em">{{unreadMessageByRoom.get(room.key).length}}</span></a>
-	      </div>
-	      <div class="chatbox-icons">
-	        <a ><i class="fa fa-minus" (click)="minusBoxChat(room.key)"></i></a>
-	        <a ><i class="fa fa-close" (click)="closeBoxChat(room.key)"></i></a>       
-	      </div>      
-	    </div>
-	    
-	    <div class="chat-messages" id="chat-messages-{{room.key}}"  [scrollTop]="scrolltop[i]">
-	    	<ng-container *ngFor="let chat of room.value; let j=index">
-	    		<ng-container *ngIf="chat.nickname==nickname">
-			       <div class="message-box-holder">
-			        <div class="message-box">
-			          {{chat.message}}
-			        </div>
-			      </div>
-	    		</ng-container>
-	    		<ng-container *ngIf="chat.nickname!=nickname">
-			      <div class="message-box-holder">
-			        <div class="message-sender" *ngIf="j>0&&room.value[j-1].nickname!=room.value[j].nickname">
-			           {{chat.nickname}}
-			         </div>
-			        <div class="message-box message-partner">
-			          {{chat.message}}
-			        </div>
-			      </div>
-	    		</ng-container>
-	    	</ng-container>
-	      
-	    </div>
-	    
-	    
-	    
-	    <div class="chat-input-holder">
-	      <textarea class="chat-input" [(ngModel)]="messages[i]" (keyup.enter)="send(i, room.key)"></textarea>
-	      <input type="submit" value="Send" class="message-send" (click)="send(i, room.key)"/>
-	    </div>
-	    <div class="attachment-panel">
-	      <a href="#" class="fa fa-thumbs-up"></a>
-	      <a href="#" class="fa fa-camera"></a>
-	      <a href="#" class="fa fa-video-camera"></a>
-	      <a href="#" class="fa fa-image"></a>
-	      <a href="#" class="fa fa-paperclip"></a>
-	      <a href="#" class="fa fa-link"></a>
-	      <a href="#" class="fa fa-trash-o"></a>
-	      <a href="#" class="fa fa-search"></a>
-	    </div>
-	  </div>
-  </ng-container>
+<div class="chatbox-holder">
+	<ng-container *ngFor="let room of chatMaps| keyvalue; let i = index ">
+	<div class="chatbox" #chatcontent id="chatbox{{room.key}}">
+		<div class="chatbox-top">
+			<div class="chatbox-avatar">
+				<a target="_blank"><img
+					src="https://gravatar.com/avatar/2449e413ade8b0c72d0a15d153febdeb?s=512&d=https://codepen.io/assets/avatars/user-avatar-512x512-6e240cf350d2f1cc07c2bed234c3a3bb5f1b237023c204c782622e80d6b212ba.png" /></a>
+				<span class="tooltiptext">{{room.key}}</span>
+			</div>
+			<div class="chat-partner-name nobr">
+				<span class="status online"></span> <a target="_blank"
+					href="https://www.facebook.com/mfreak">{{room.key}}</a> <a
+					*ngIf="unreadMessageByRoom.has(room.key)"><span
+					class="badge badge-danger"
+					style="padding: .25em .4em !important; margin-left: .25em">{{unreadMessageByRoom.get(room.key).length}}</span></a>
+			</div>
+			<div class="chatbox-icons">
+				<a><i class="fa fa-minus" (click)="minusBoxChat(room.key)"></i></a>
+				<a><i class="fa fa-close" (click)="closeBoxChat(room.key)"></i></a>
+			</div>
+		</div>
 
+		<div class="chat-messages" id="chat-messages-{{room.key}}"
+			[scrollTop]="scrolltop[i]">
+			<ng-container *ngFor="let chat of room.value; let j=index">
+			<ng-container *ngIf="chat.nickname==nickname">
+			<div class="message-box-holder">
+				<div class="message-box">{{chat.message}}</div>
+			</div>
+			</ng-container> <ng-container *ngIf="chat.nickname!=nickname">
+			<div class="message-box-holder">
+				<div class="message-sender"
+					*ngIf="j>0&&room.value[j-1].nickname!=room.value[j].nickname">
+					{{chat.nickname}}</div>
+				<div class="message-box message-partner">{{chat.message}}</div>
+			</div>
+			</ng-container> </ng-container>
+
+		</div>
+
+
+
+		<div class="chat-input-holder">
+			<textarea class="chat-input" [(ngModel)]="messages[i]"
+				(keyup.enter)="send(i, room.key)"></textarea>
+			<input type="submit" value="Send" class="message-send"
+				(click)="send(i, room.key)" />
+		</div>
+		<div class="attachment-panel">
+			<a href="#" class="fa fa-thumbs-up"></a> <a href="#"
+				class="fa fa-camera"></a> <a href="#" class="fa fa-video-camera"></a>
+			<a href="#" class="fa fa-image"></a> <a href="#"
+				class="fa fa-paperclip"></a> <a href="#" class="fa fa-link"></a> <a
+				href="#" class="fa fa-trash-o"></a> <a href="#" class="fa fa-search"></a>
+		</div>
+	</div>
+	</ng-container>
+	<div class="chatbox friend-list">
+		<div class="chatbox-top">
+			<div class="chat-partner-name nobr" style="padding-left: 5px">
+				<a target="_blank">Friend List</a> <a><span
+					class="badge badge-danger"
+					style="padding: .25em .4em !important; margin-left: .25em">10</span></a>
+			</div>
+			<div class="chatbox-icons">
+				<a><i class="fa fa-minus"></i></a> <a><i class="fa fa-close"></i></a>
+			</div>
+		</div>
+		<div class="chat-messages">
+			<table>
+				<tbody>
+					<ng-container *ngFor="let room of rooms">
+					<tr class="border-bottom" style="cursor: pointer;" (click)="openChatRoom(room.roomname)">
+						<img style="width: 40px; height: 40px" class="img-thumbnail"
+						 src="https://gravatar.com/avatar/2449e413ade8b0c72d0a15d153febdeb?s=512&d=https://codepen.io/assets/avatars/user-avatar-512x512-6e240cf350d2f1cc07c2bed234c3a3bb5f1b237023c204c782622e80d6b212ba.png" alt="..." class="rounded-circle">
+						{{room.roomname}}
+					</tr>
+					</ng-container>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
 </div>
